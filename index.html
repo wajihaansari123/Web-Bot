@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual AI Assistant</title>
+    <link rel="icon" href="icons8-robot-94.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <style>
+        /* Instagram-like styles */
+        .sender {
+            background: linear-gradient(135deg, #ff5858, #f857a6);
+            color: white;
+            border-radius: 20px 0px 20px 20px;
+            margin-top: 10px;
+        }
+
+        .receiver {
+            background: #e0e0e0;
+            color: #333;
+            border-radius: 20px 20px 20px 0;
+        }
+
+        .rounded-circle {
+            border: 2px solid #ff5858;
+        }
+
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: black;
+            overflow: hidden;
+        }
+
+        /* Existing blob styles */
+        .blob {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #ff006a, #ffbf00);
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            animation: blob-animation 6s infinite;
+        }
+
+        /* Blob positioned at the bottom-right corner */
+        .blob-bottom-right {
+            right: 20px;
+            /* Adjust position closer to the screen */
+            bottom: 20px;
+            /* Adjust position closer to the screen */
+            background: linear-gradient(135deg, #a14ffe, #8975e0);
+            /* Different gradient color */
+            animation-delay: -1s;
+            /* Different animation delay */
+        }
+
+        /* Keyframes for blob animation */
+        @keyframes blob-animation {
+
+            0%,
+            100% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            33% {
+                transform: scale(1.1) translate(-60px, -50px);
+            }
+
+            66% {
+                transform: scale(0.9) translate(20px, 40px);
+            }
+        }
+
+        .content {
+            z-index: 2;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .inner-card {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 0 auto;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .text-center {
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .btn-send {
+            background-color: #ff006a;
+            color: #e0e0e0;
+        }
+
+        .btn-send:hover {
+            background-color: #ff5858;
+            color: #e0e0e0;
+        }
+
+        .heading-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .left-image {
+            position: absolute;
+            left: 260px;
+            /* Adjust this value to set the distance from the left edge */
+            top: 25px;
+            /* Adjust this value to set the distance from the top edge */
+            z-index: 1;
+            /* Ensure it appears above other content if needed */
+        }
+    </style>
+</head>
+
+<body class="background">
+    <div class="left-image-container">
+        <img src="icons8-robot-94.png" alt="Decorative Image" class="left-image">
+    </div>
+    <div class="blob"></div>
+    <div class="blob" style="animation-delay: -3s;"></div>
+    <div class="blob blob-bottom-right"></div>
+    <div class="container">
+        <!-- Heading placed above the glassmorphism effect -->
+        <div class="heading-container">
+            <div class="h1 text-center mt-5 mb-3">
+                Virtual AI Assistant (Your Web Developer)
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="inner-card">
+                    <div class="card-body">
+                        <div id="messages" class="overflow-auto" style="min-height: 70vh; max-height: 62vh">
+                            <div class="d-flex align-items-center">
+                                <img src="Wajeeha Ansari.png" alt="AI Avatar" width="50" class="me-3 rounded-circle">
+                                <div class="w-50 receiver p-3">
+                                    <small class="text-decoration-underline">Your Virtual Assistant</small>
+                                    <p>
+                                        Hey there! I am your Web Developer.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-10">
+                                    <input type="text" placeholder="Enter Your Prompt here" id="inputPrompt"
+                                        class="form-control" />
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-send w-100 h-100" id="sendPromptBtn" onclick="GetResponse()">
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    // Function to handle the Enter key press
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default action (e.g., form submission)
+            GetResponse(); // Call the function to send the message
+        }
+    }
+
+    // Function to get the response and handle message sending
+    function GetResponse() {
+        const sendPromptBtn = document.getElementById('sendPromptBtn');
+        const inputPrompt = document.getElementById('inputPrompt');
+        const messages = document.getElementById('messages');
+
+        sendPromptBtn.innerHTML = `Sending <div class="spinner-border spinner-border-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>`;
+
+        const promptValue = inputPrompt.value;
+
+        if (promptValue.trim() === "") {
+            sendPromptBtn.innerHTML = "Send";
+            return;
+        }
+
+        messages.innerHTML += `<div class="w-50 sender p-3 rounded ms-auto">
+                  <small class="text-decoration-underline">You</small>
+                  <p>${promptValue}</p>
+                </div>`;
+
+        const roleValue = "You act as a Web Developer and your name is Wajiha";
+
+        fetch(
+            "http://localhost/my-bot/api.php?role=" +
+            roleValue +
+            "&&prompt=" +
+            promptValue
+        )
+            .then((res) => {
+                if (res.ok) {
+                    return res.json();
+                }
+            })
+            .then((data) => {
+                messages.innerHTML += `<div class="d-flex align-items-center mt-3">
+                  <img src="Wajeeha Ansari.png" alt="AI Avatar" width="50" class="me-3 rounded-circle">
+                  <div class="w-50 receiver p-3">
+                      <small class="text-decoration-underline">Virtual Assistant</small>
+                      <p>${data.choices[0].message.content}</p>
+                  </div>
+                </div>`;
+                inputPrompt.value = "";
+                sendPromptBtn.innerHTML = "Send";
+            })
+            .catch(() => {
+                sendPromptBtn.innerHTML = "Send";
+            });
+    }
+
+    // Attach the handleKeyDown function to the input field
+    document.getElementById('inputPrompt').addEventListener('keydown', handleKeyDown);
+</script>
+
+</html>
